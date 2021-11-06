@@ -149,7 +149,7 @@ var Lobby = class {
             this.chosenPlayer = this.players[Math.floor(Math.random() * this.players.length)];
             this.originalStatement = "Hamsters can swim by default."; //TODO: Import questions here
             this.trueOrFalse = false; //TODO: Impot answer here
-            this.phaseDuration = 10;
+            this.phaseDuration = 30;
             this.playerGivenStatement = "";
 
             const currentRoundIdx = this.roundIndex;
@@ -162,14 +162,14 @@ var Lobby = class {
                   if (this.state == GameState.RoundStartPhase && this.roundIndex == currentRoundIdx) {
                         this.enterPlayPhase();
                   }
-            }, 10000);
+            }, this.phaseDuration * 1000);
       }
 
       enterPlayPhase() {
             if (this.state != GameState.RoundStartPhase) return;
 
             this.state = GameState.PlayPhase;
-            this.phaseDuration = 10;
+            this.phaseDuration = 15;
 
             const currentRoundIdx = this.roundIndex;
 
@@ -177,14 +177,14 @@ var Lobby = class {
                   if (this.state == GameState.PlayPhase && this.roundIndex == currentRoundIdx) {
                         this.revealResults();
                   }
-            }, 10000);
+            }, this.phaseDuration * 1000);
       }
 
       revealResults() {
             if (this.state != GameState.PlayPhase) return;
 
             this.state = GameState.RevealPhase;
-            this.phaseDuration = 10;
+            this.phaseDuration = 15;
 
             let wrongAnswerCount = 0;
 
@@ -203,7 +203,7 @@ var Lobby = class {
 
             setTimeout(() => {
                   this.endGame();
-            }, 10000);
+            }, this.phaseDuration * 1000);
       }
 
       endGame() {
@@ -256,7 +256,6 @@ var Lobby = class {
                         this.owner = this.players[0];
                         this.players[0].isOwner = true;
                   } else {
-                        console.log("removed lobby: " + this.id);
                         lobbies = lobbies.filter((lob) => lob.id !== this.id);
                   }
             }
@@ -366,7 +365,6 @@ module.exports = {
             }
 
             const answer = req.body["answer"];
-            console.log("received answer from " + player.name + ": " + answer);
             player.givenAnswer = answer;
 
             return res.status(200).send("ok");
@@ -379,10 +377,6 @@ module.exports = {
                   return res.status(404).json({ couldntFindLobby: lobbyId });
             }
 
-            if (lobby.state != GameState.RoundStartPhase) {
-                  return res.status(403).send("wrong lobby phase");
-            }
-
             const player = lobby.players.find((player) => player.id == playerId);
             if (player == undefined) {
                   return res.status(404).json({ couldntFindPlayer: playerId });
@@ -393,7 +387,6 @@ module.exports = {
             }
 
             const statement = req.body["statement"];
-            console.log("received statement: " + statement);
             lobby.playerGivenStatement = statement;
 
             return res.status(200).send("ok");
@@ -420,7 +413,6 @@ module.exports = {
             }
 
             lobby.startNewRound();
-            console.log("received start command");
             return res.status(200).send("game started");
       },
 };
