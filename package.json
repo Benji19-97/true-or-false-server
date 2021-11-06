@@ -4,7 +4,7 @@
   "description": "server for it's a lie game",
   "main": "index.js",
   "scripts": {
-    "start": "node injdex.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
