@@ -1,4 +1,51 @@
 const express = require("express");
+const fs = require("fs");
+const readline = require("readline");
+
+//load true statements
+const rlTrue = readline.createInterface({
+      input: fs.createReadStream("true_statements.txt"),
+      output: process.stdout,
+      terminal: false,
+});
+
+var trueStatements = [];
+
+rlTrue.on("line", (line) => {
+      trueStatements.push(line);
+});
+//end load true statements
+
+//load false statements
+const rlFalse = readline.createInterface({
+      input: fs.createReadStream("false_statements.txt"),
+      output: process.stdout,
+      terminal: false,
+});
+
+var falseStatements = [];
+
+rlFalse.on("line", (line) => {
+      falseStatements.push(line);
+});
+
+function getStatement() {
+      var random_boolean = Math.random() < 0.5;
+
+      if (random_boolean) {
+            const statementTrue = trueStatements[Math.floor(Math.random() * trueStatements.length)];
+            return {
+                  statement: statementTrue,
+                  answer: random_boolean,
+            };
+      } else {
+            var statementFalse = falseStatements[Math.floor(Math.random() * falseStatements.length)];
+            return {
+                  statement: statementFalse,
+                  answer: random_boolean,
+            };
+      }
+}
 
 const GameState = {
       LobbyPhase: 1,
@@ -147,8 +194,11 @@ var Lobby = class {
             this.roundIndex += 1;
             this.status = "closed";
             this.chosenPlayer = this.players[Math.floor(Math.random() * this.players.length)];
-            this.originalStatement = "Hamsters can swim by default."; //TODO: Import questions here
-            this.trueOrFalse = false; //TODO: Impot answer here
+
+            let statement = getStatement();
+
+            this.originalStatement = statement.statement;
+            this.trueOrFalse = statement.answer;
             this.phaseDuration = 30;
             this.playerGivenStatement = "";
 
