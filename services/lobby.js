@@ -240,14 +240,15 @@ var Lobby = class {
 
             this.players.forEach((player) => {
                   if (player != this.chosenPlayer) {
-                        let playerAnswer = player.givenAnswer;
-                        if (playerAnswer === this.trueOrFalse) {
-                              player.score += 1;
-                        } else {
+                        if (player.givenAnswer != this.trueOrFalse) {
                               wrongAnswerCount += 1;
                         }
+                  }
+            });
 
-                        this.chosenPlayer.score += wrongAnswerCount;
+            this.players.forEach((player) => {
+                  if (player != this.chosenPlayer || player.givenAnswer == this.trueOrFalse) {
+                        player.score += wrongAnswerCount;
                   }
             });
 
